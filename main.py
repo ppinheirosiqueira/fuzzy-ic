@@ -1,74 +1,37 @@
 import fuzzyficador as fz
+import dominio as dom
+
+funcoes_de_pertinencia = {
+    "Triangular não complementar": fz.func_pert_triangular,
+    "Triangular complementar": fz.func_pert_triangular,
+    "Trapezoidal": fz.func_pert_trapezoidal,
+    "Gaussiana": fz.func_pert_gaussiana,
+    "Sigmoidal": fz.func_pert_sigmoidal,
+    "Sino Generalizada": fz.func_pert_sino_generalizada,
+    "Z Shaped": fz.func_pert_z_shaped,
+    "S Shaped": fz.func_pert_s_shaped,
+}
 
 def __main__():
     dom_x = [0,100]
-    funcoes = dominio_triangular(dom_x,4)
-    print(funcoes)
-    for chave in funcoes.keys():
-        print(fz.func_triangular(1,funcoes[chave][0],funcoes[chave][1],funcoes[chave][2]))
-    funcoes = dominio_triangular_complementares(dom_x,4)
-    print(funcoes)
-    for chave in funcoes.keys():
-        print(fz.func_triangular(1,funcoes[chave][0],funcoes[chave][1],funcoes[chave][2]))
-    funcoes = dominio_trapezoidal(dom_x,3)
-    print(funcoes)
-    for chave in funcoes.keys():
-        print(fz.func_trapezoidal(1,funcoes[chave][0],funcoes[chave][1],funcoes[chave][2],funcoes[chave][3]))
+    dominios = {
+        "Triangular não complementar": dom.dominio_triangular(dom_x,4),
+        "Triangular complementar": dom.dominio_triangular_complementares(dom_x,4),
+        "Trapezoidal": dom.dominio_trapezoidal(dom_x,4),
+        "Gaussiana": dom.dominio_gaussiana(dom_x,4),
+        "Sigmoidal": dom.dominio_sigmoidal(dom_x,4),
+        "Sino Generalizada": dom.dominio_sino_generalizada(dom_x,4),
+        "Z Shaped": dom.dom_shapeds(dom_x,4),
+        "S Shaped": dom.dom_shapeds(dom_x,4),
+    }
 
-def dominio_triangular(limites:list[float],numero_de_funcoes:int) -> dict:
-    if limites[0] > limites[1]:
-        raise ValueError("Erro: Não é possível ter um limite inferior maior que o superior")
-    
-    numero_de_divisoes = numero_de_funcoes + 1
+    valor_testado = 25
 
-    intervalo = (limites[1] - limites[0])/numero_de_divisoes
-
-    dominios = {}
-
-    for i in range(numero_de_funcoes):
-        dominios[i] = [intervalo*i, intervalo*(i+1), intervalo*(i+2)]
-
-    return dominios
-
-def dominio_triangular_complementares(limites:list[float],numero_de_funcoes:int) -> dict:
-    if limites[0] > limites[1]:
-        raise ValueError("Erro: Não é possível ter um limite inferior maior que o superior")
-    
-    numero_de_divisoes = numero_de_funcoes - 1
-
-    intervalo = (limites[1] - limites[0])/numero_de_divisoes
-
-    dominios = {}
-
-    for i in range(numero_de_funcoes):
-        if i == 0:
-            dominios[i] = [limites[0], limites[0], intervalo]
-        elif i == numero_de_funcoes - 1:
-            dominios[i] = [limites[1] - intervalo, limites[1], limites[1]]
-        else:
-            dominios[i] = [intervalo*(i-1), intervalo*(i), intervalo*(i+1)]
-
-    return dominios
-
-def dominio_trapezoidal(limites:list[float],numero_de_funcoes:int) -> dict:
-    if limites[0] > limites[1]:
-        raise ValueError("Erro: Não é possível ter um limite inferior maior que o superior")
-
-    numero_de_divisoes = 2*numero_de_funcoes - 1
-
-    intervalo = (limites[1] - limites[0])/numero_de_divisoes
-
-    dominios = {}
-
-    for i in range(numero_de_funcoes):
-        if i == 0:
-            dominios[i] = [limites[0], limites[0], intervalo, intervalo*2]
-        elif i == numero_de_funcoes - 1:
-            dominios[i] = [limites[1] - intervalo*2, limites[1] - intervalo, limites[1], limites[1]]
-        else:
-            dominios[i] = [intervalo*i, intervalo*(i + 1), intervalo*(i+2), intervalo*(i+3)]
-
-    return dominios
+    for chave in dominios.keys():
+        print(f"Os dominios da {chave} foram determinados: {dominios[chave]}")
+        for funcao in dominios[chave].keys():
+            print(f"O valor {valor_testado} tem pertinência {funcoes_de_pertinencia[chave](valor_testado,*dominios[chave][funcao])} no dominio {dominios[chave][funcao]}")
+        print('\n')
 
 if __name__ == "__main__":
     __main__()
