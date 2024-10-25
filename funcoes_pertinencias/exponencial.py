@@ -1,11 +1,18 @@
 import math
+from .generica import funcao_pertinencia
 
-class exponencial:
+class exponencial(funcao_pertinencia):
     
-    def __init__(self, limites:list,numero_de_funcoes:int):
+    def __init__(self, diferenca:float,numero_de_funcoes:int):
         self.dominios = {}
 
-        pass
+        numero_de_divisoes = numero_de_funcoes - 1
+
+        intervalo = diferenca/numero_de_divisoes
+        met_int = 0.5*intervalo
+
+        for i in range(numero_de_funcoes):
+            self.dominios[i] = [met_int,intervalo*i]
 
     def get_pertinencias(self,x:float):
         pertinencias = []

@@ -21,7 +21,9 @@ class fuzzyficador:
             "Z Shaped": fp.z_shaped(diferenca, numero_de_funcoes),
             "S Shaped": fp.s_shaped(diferenca, numero_de_funcoes),
             "Cauchy": fp.cauchy(diferenca,numero_de_funcoes),
-            "Gaussiana Dupla": fp.gaussiana_dupla(diferenca,numero_de_funcoes)
+            "Gaussiana Dupla": fp.gaussiana_dupla(diferenca,numero_de_funcoes),
+            "Exponencial": fp.exponencial(diferenca,numero_de_funcoes),
+            "Pi Shaped": fp.pi_shaped(diferenca,minimo,maximo,numero_de_funcoes)
         }
     
     def get_pertinencia(self,x:float):
