@@ -1,4 +1,5 @@
 import funcoes_pertinencias as fp
+import matplotlib.pyplot as plt
 
 class fuzzyficador:
 
@@ -10,6 +11,8 @@ class fuzzyficador:
         maximo = max(x1,x2)
 
         diferenca = maximo - minimo
+
+        self.dominio = [minimo, maximo]
 
         self.funcoes = {
             "Triangular não complementar": fp.triangular(diferenca, numero_de_funcoes),
@@ -26,6 +29,47 @@ class fuzzyficador:
             "Pi Shaped": fp.pi_shaped(diferenca,minimo,maximo,numero_de_funcoes)
         }
     
-    def get_pertinencia(self,x:float):
-        for item in self.funcoes:
-            self.funcoes[item].get_pertinencias(x)
+    def get_pertinencia(self,lista_valores:list):
+        pertinencias = {}
+        for valor in lista_valores:
+            pertinencias[valor] = {}
+            for item in self.funcoes:
+                pertinencias[valor][item] = self.funcoes[item].get_pertinencias(valor)
+        
+        return pertinencias
+    
+    def plot_grafico(self,tipo:str):
+        self.funcoes[tipo].plot_grafico(tipo, self.dominio)
+
+    def plot_graficos(self, tipos:list):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_grafico(chave, self.dominio))
+        plt.show()
+
+    def plot_complemento(self,tipo:str):
+        self.funcoes[tipo].plot_complemento(tipo, self.dominio)
+
+    def plot_complementos(self, tipos:list):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_grafico_complemento(chave, self.dominio))
+        plt.show()
+
+    def plot_uniao(self,tipo:str):
+        self.funcoes[tipo].plot_uniao(tipo, self.dominio)
+
+    def plot_unioes(self, tipos:list):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_grafico_uniao(chave, self.dominio))
+        plt.show()
+
+    def plot_intersecao(self,tipo:str):
+        self.funcoes[tipo].plot_intersecao(tipo, self.dominio)
+
+    def plot_intersecoes(self, tipos:list):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_grafico_intersecao(chave, self.dominio))
+        plt.show()

@@ -22,11 +22,8 @@ class gaussiana(funcao_pertinencia):
 
     def get_pertinencias(self,x:float):
         pertinencias = []
-        print("Nas funções Gaussianas:")
         for funcao in self.dominios.keys():
             pertinencias.append(self.get_pertinencia(x,*self.dominios[funcao]))
-            print(f"O valor {x} tem pertinência {pertinencias[-1]:.2f} no dominio {self.print_dominio(self.dominios[funcao])}")
-        print('\n')
         return pertinencias
 
     def get_pertinencia(self,x:float,c,sigma):

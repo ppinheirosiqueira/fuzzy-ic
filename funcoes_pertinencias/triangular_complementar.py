@@ -10,20 +10,12 @@ class triangular_complementar(funcao_pertinencia):
         intervalo = diferenca/numero_de_divisoes
 
         for i in range(numero_de_funcoes):
-            if i == 0:
-                self.dominios[i] = [minimo, minimo, intervalo]
-            elif i == numero_de_funcoes - 1:
-                self.dominios[i] = [maximo - intervalo, maximo, maximo]
-            else:
-                self.dominios[i] = [intervalo*(i-1), intervalo*(i), intervalo*(i+1)]
+            self.dominios[i] = [intervalo*(i-1), intervalo*(i), intervalo*(i+1)]
 
     def get_pertinencias(self,x:float):
         pertinencias = []
-        print("Nas funções triangulares complementares:")
         for funcao in self.dominios.keys():
             pertinencias.append(self.get_pertinencia(x,*self.dominios[funcao]))
-            print(f"O valor {x} tem pertinência {pertinencias[-1]:.2f} no dominio {self.print_dominio(self.dominios[funcao])}")
-        print('\n')
         return pertinencias
 
     def get_pertinencia(self,x:float,a,b,c):

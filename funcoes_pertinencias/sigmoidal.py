@@ -18,15 +18,12 @@ class sigmoidal(funcao_pertinencia):
         inclinacao = 2/intervalo
 
         for i in range(numero_de_funcoes):
-            self.dominios[i] = [intervalo*i, inclinacao]
-
+            self.dominios[i] = [inclinacao, intervalo*i]
+            
     def get_pertinencias(self,x:float):
         pertinencias = []
-        print("Nas funções Sigmoidal:")
         for funcao in self.dominios.keys():
             pertinencias.append(self.get_pertinencia(x,*self.dominios[funcao]))
-            print(f"O valor {x} tem pertinência {pertinencias[-1]:.2f} no dominio {self.print_dominio(self.dominios[funcao])}")
-        print('\n')
         return pertinencias
 
     def get_pertinencia(self,x:float,a,c):
