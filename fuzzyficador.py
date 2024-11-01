@@ -73,3 +73,21 @@ class fuzzyficador:
         for chave in tipos:
             figuras.append(self.funcoes[chave].get_grafico_intersecao(chave, self.dominio))
         plt.show()
+
+    def plot_grafico_t_normas(self, tipo:str, p, gama):
+        self.funcoes[tipo].plot_t_normas(tipo, self.dominio, p, gama)
+
+    def plot_graficos_t_normas(self, tipos:list, p, gama):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_t_normas(chave, self.dominio, p, gama))
+        plt.show()
+
+    def plot_grafico_s_normas(self, tipo:str, p, gama):
+        self.funcoes[tipo].plot_s_normas(tipo, self.dominio, p, gama)
+
+    def plot_graficos_s_normas(self, tipos:list, p, gama):
+        figuras = []
+        for chave in tipos:
+            figuras.append(self.funcoes[chave].get_s_normas(chave, self.dominio, p, gama))
+        plt.show()

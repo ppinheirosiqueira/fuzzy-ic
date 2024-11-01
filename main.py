@@ -12,15 +12,16 @@ def print_pertinencias(pertinencias:list):
 
 def __main__():
     fuzzyficador = fz.fuzzyficador(100,0,4)
-    pertinencias = fuzzyficador.get_pertinencia([28,76])
+    # pertinencias = fuzzyficador.get_pertinencia([28,76])
     # print_pertinencias(pertinencias)
-    #fuzzyficador.plot_grafico("Gaussiana Dupla")
+    # fuzzyficador.plot_grafico("Gaussiana Dupla")
     #fuzzyficador.plot_graficos(fuzzyficador.funcoes.keys())
-    #fuzzyficador.plot_complementos(fuzzyficador.funcoes.keys())
+    # fuzzyficador.plot_complementos(fuzzyficador.funcoes.keys())
     # fuzzyficador.plot_grafico("Sino Generalizada")
     # fuzzyficador.plot_uniao("Sino Generalizada")
     # fuzzyficador.plot_unioes(fuzzyficador.funcoes.keys())
-    fuzzyficador.plot_intersecoes(fuzzyficador.funcoes.keys())
+    # fuzzyficador.plot_intersecoes(fuzzyficador.funcoes.keys())
+    fuzzyficador.plot_grafico_s_normas("Exponencial", 5, 3458)
 
 if __name__ == "__main__":
     __main__()
