@@ -1,5 +1,6 @@
 import funcoes_pertinencias as fp
 import matplotlib.pyplot as plt
+import os
 
 class fuzzyficador:
 
@@ -90,4 +91,16 @@ class fuzzyficador:
         figuras = []
         for chave in tipos:
             figuras.append(self.funcoes[chave].get_s_normas(chave, self.dominio, p, gama))
+        plt.show()
+
+    def plot_graficos_normas(self, tipos:list, p, gama):
+        os.makedirs('images', exist_ok=True)
+        figuras = []
+        for chave in tipos:
+            figura_t = self.funcoes[chave].get_t_normas(chave, self.dominio, p, gama)
+            figura_t.savefig(f'images/{chave}-T-norm.png', format='png')
+            figuras.append(figura_t)
+            figura_s = self.funcoes[chave].get_s_normas(chave, self.dominio, p, gama)
+            figura_s.savefig(f'images/{chave}-S-norm.png', format='png')
+            figuras.append(figura_s)
         plt.show()

@@ -101,9 +101,9 @@ class funcao_pertinencia:
 
         return figura
     
-    def plot_normas_duais(self, titulo:str, dominio:list):
-        self.plot_t_normas(titulo, dominio)
-        self.plot_s_normas(titulo, dominio)
+    def plot_normas_duais(self, titulo:str, dominio:list, p:float, gama: float):
+        self.plot_t_normas(titulo, dominio, p, gama)
+        self.plot_s_normas(titulo, dominio, p, gama)
 
     def get_t_normas(self, titulo:str, dominio:list, p:float, gama: float):
         # São as minimas
@@ -124,10 +124,10 @@ class funcao_pertinencia:
                 ax.plot(line.get_xdata(), line.get_ydata(), label=line.get_label())
             
             ax.set_title(figura._suptitle.get_text() if figura._suptitle else titulo)
-            ax.legend()
             ax.grid(True)
         
         plt.tight_layout()
+        return fig
 
     def plot_t_normas(self, titulo:str, dominio:list, p:float, gama: float):
         figura = self.get_t_normas(titulo, dominio, p, gama)
@@ -152,10 +152,10 @@ class funcao_pertinencia:
                 ax.plot(line.get_xdata(), line.get_ydata(), label=line.get_label())
             
             ax.set_title(figura._suptitle.get_text() if figura._suptitle else titulo)
-            ax.legend()
             ax.grid(True)
         
         plt.tight_layout()
+        return fig
 
     def plot_s_normas(self, titulo:str, dominio:list, p, gama):
         # São as máximas
