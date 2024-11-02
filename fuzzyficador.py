@@ -30,6 +30,13 @@ class fuzzyficador:
             "Pi Shaped": fp.pi_shaped(diferenca,minimo,maximo,numero_de_funcoes)
         }
     
+    def get_pertinencia_especifica(self, lista_valores:list, tipo:str, funcao:int):
+        pertinencias = []
+        for valor in lista_valores:
+            pertinencias.append(self.funcoes[tipo].get_pertinencia(valor,*self.funcoes[tipo].dominios[funcao]))
+        
+        return pertinencias
+    
     def get_pertinencia(self,lista_valores:list):
         pertinencias = {}
         for valor in lista_valores:
