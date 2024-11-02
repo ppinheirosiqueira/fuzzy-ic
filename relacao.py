@@ -38,12 +38,9 @@ def get_valor_norma(funcao:str, a, b, p = 0, gama = 0):
         case _:
             print('No match found')
 
-def get_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, funcao_2, norma:str, p=0, gama=0, ax=None):
+def get_valor_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, funcao_2, norma:str, p=0, gama=0):
     x = np.arange(fuzzyficador_1.dominio[0], fuzzyficador_1.dominio[1], 0.1)
     y = np.arange(fuzzyficador_2.dominio[0], fuzzyficador_2.dominio[1], 0.1)
-
-    # Cria uma grade de valores X e Y
-    X, Y = np.meshgrid(x, y)
 
     # Calcula o valor de Z para cada par de (x, y) da grade
     z = []
@@ -63,6 +60,15 @@ def get_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, fu
         z.append(aux)
 
     z = np.array(z)  # Converte para array numpy
+    return z
+
+def get_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, funcao_2, norma:str, p=0, gama=0, ax=None):
+    x = np.arange(fuzzyficador_1.dominio[0], fuzzyficador_1.dominio[1], 0.1)
+    y = np.arange(fuzzyficador_2.dominio[0], fuzzyficador_2.dominio[1], 0.1)
+
+    # Cria uma grade de valores X e Y
+    X, Y = np.meshgrid(x, y)
+    z = get_valor_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1, funcao_1, tipo_2, funcao_2, norma, p, gama)
 
     # Plota no eixo fornecido ou no padrão
     scatter = ax.scatter(X, Y, c=z, cmap='coolwarm', marker='s', edgecolor='none')
@@ -101,6 +107,15 @@ def plot_relacoes(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, 
     plt.subplots_adjust(right=0.85)  # Ajusta a figura para dar espaço para a barra de cor
     plt.show()
 
-def plot_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, funcao_2, norma, p = 0, gama = 0):
-    get_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1, funcao_1, tipo_2, funcao_2, norma, p, gama)
+def plot_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1:str, funcao_1, tipo_2, funcao_2, norma, p=0, gama=0):
+    # Cria uma figura e um único eixo
+    fig, ax = plt.subplots(figsize=(8, 6))  # Ajuste o tamanho conforme necessário
+    
+    # Chama a função get_relacao com o eixo criado
+    scatter = get_relacao(fuzzyficador_1, fuzzyficador_2, tipo_1, funcao_1, tipo_2, funcao_2, norma, p, gama, ax)
+    
+    # Adiciona a barra de cor
+    cbar = fig.colorbar(scatter, ax=ax, orientation='vertical', label="Valor entre 0 e 1")
+    
+    plt.tight_layout()
     plt.show()
