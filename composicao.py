@@ -32,24 +32,27 @@ def calcular_composicao(matriz_1, matriz_2, composicao):
 
     return resultado
 
-def plotar_composicoes(matriz_1,matriz_2):
+def plotar_composicoes(matriz_1,matriz_2,nome_matriz_1,nome_matriz_2):
     comp_max_min = calcular_composicao(matriz_1, matriz_2, "max-min")
     comp_min_max = calcular_composicao(matriz_1, matriz_2, "min-max")
     comp_max_prod = calcular_composicao(matriz_1, matriz_2, "max-prod")
     fig, axs = plt.subplots(1, 3, figsize=(18, 5))
 
-    axs[0].imshow(comp_max_min, cmap="viridis", interpolation="nearest")
+    axs[0].imshow(comp_max_min, cmap="coolwarm", interpolation="nearest", origin="lower")
     axs[0].set_title("Composição Max-Min")
     axs[0].set_xlabel("Conjunto B")
     axs[0].set_ylabel("Conjunto A")
 
-    axs[1].imshow(comp_min_max, cmap="viridis", interpolation="nearest")
+    axs[1].imshow(comp_min_max, cmap="coolwarm", interpolation="nearest", origin="lower")
     axs[1].set_title("Composição Min-Max")
     axs[1].set_xlabel("Conjunto B")
 
-    axs[2].imshow(comp_max_prod, cmap="viridis", interpolation="nearest")
+    axs[2].imshow(comp_max_prod, cmap="coolwarm", interpolation="nearest", origin="lower")
     axs[2].set_title("Composição Max-Prod")
     axs[2].set_xlabel("Conjunto B")
 
-    plt.colorbar(axs[0].imshow(comp_max_min, cmap="viridis", interpolation="nearest"), ax=axs, orientation='horizontal')
+    plt.colorbar(axs[0].imshow(comp_max_min, cmap="coolwarm", interpolation="nearest"), ax=axs, orientation='horizontal')
+
+    fig.text(0.5, 0.01, f"Conjunto A: {nome_matriz_1} | Conjunto B: {nome_matriz_2}", ha='center', fontsize=12)
+
     plt.show()
