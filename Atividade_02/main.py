@@ -110,13 +110,13 @@ def aproximar(numero_funcoes, erro_minimo):
     ganho = 1
     multiplicador = 10
 
-    while erros[-1] > erro_minimo:
+    while menor_erro > erro_minimo and geracao_atual - melhor_ger < maximo_geracoes:
         i = random.randint(0,numero_funcoes - 1)
         j = random.randint(0, 1 + len(funcoes_pertinencia[0]))
 
         geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
 
-        while ((erros[-2] - erros[-1])/erros[-2] > ganho): # Testar com multiplicador igual a 1
+        while ((erros[-2] - erros[-1])/erros[-2] > 0.05*ganho):
             valores_anteriores_funcoes = copy.deepcopy(funcoes_pertinencia)
             valores_anteriores_z = copy.deepcopy(vetor_funcoes_z)
             geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
@@ -128,7 +128,7 @@ def aproximar(numero_funcoes, erro_minimo):
         
         geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
 
-        while ((erros[-2] - erros[-1])/erros[-2] > ganho): # Testar com multiplicador igual a 1
+        while ((erros[-2] - erros[-1])/erros[-2] > 0.05*ganho):
             valores_anteriores_funcoes = copy.deepcopy(funcoes_pertinencia)
             valores_anteriores_z = copy.deepcopy(vetor_funcoes_z)
             geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
@@ -140,9 +140,6 @@ def aproximar(numero_funcoes, erro_minimo):
 
         if geracao_atual - melhor_ger > numero_teste_geracoes and ganho > 0.05*erro_minimo:
             ganho /= 2
-
-        if geracao_atual - melhor_ger >= maximo_geracoes:
-            break
 
     return menor_erro, erros, funcoes_pertinencia, vetor_funcoes_z
 
