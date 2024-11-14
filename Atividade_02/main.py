@@ -180,16 +180,35 @@ zs = {}
 x = np.linspace(0, 10, 100)
 f_x = np.exp(-x / 5) * np.sin(3 * x) + 0.5 * np.sin(x)
 
-for funcao in [10]:
-    for erro in [0.05]:
+for funcao in [5, 6, 7, 8, 9, 10]:
+    for erro in [0.05, 0.01]:
         print(f"{funcao} funções de pertinência e erro mínimo {erro}")
-        menor_erro, vet_erros, funcoes_pertinencia, vetor_funcoes_z = aproximar(funcao, erro)
-        print(f"Erro: {menor_erro}")
-        erros[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vet_erros
-        erros_min[f"{funcao} funções de pertinência e erro mínimo {erro}"] = menor_erro
-        pertinencias[f"{funcao} funções de pertinência e erro mínimo {erro}"] = funcoes_pertinencia
-        funcoes_z[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vetor_funcoes_z
-        zs[f"{funcao} funções de pertinência e erro mínimo {erro}"] = calcular_z(x,funcoes_pertinencia,vetor_funcoes_z)
+        erro_aux = []
+        vet_erro_aux = []
+        funcao_aux = []
+        vetor_z_aux = []
+        for i in range(10): # Número de testes
+            print(f"Iteração {i}")
+            menor_erro, vet_erros, funcoes_pertinencia, vetor_funcoes_z = aproximar(funcao, erro)
+            erro_aux.append(menor_erro)
+            vet_erro_aux.append(vet_erros)
+            funcao_aux.append(funcoes_pertinencia)
+            vetor_z_aux.append(vetor_funcoes_z)
+        media_erro_aux = np.mean(erro_aux)
+        desvio_erro_aux = np.std(erro_aux)
+        print(f'Média de erro_aux: {media_erro_aux:.4}')
+        print(f'Desvio padrão de erro_aux: {desvio_erro_aux:.4}')
+        tamanhos_vetores = [len(vetor) for vetor in vet_erro_aux]
+        media_tamanhos = np.mean(tamanhos_vetores)
+        desvio_tamanhos = np.std(tamanhos_vetores)
+        print(f'Média dos tamanhos em vet_erro_aux: {media_tamanhos:.4}')
+        print(f'Desvio padrão dos tamanhos em vet_erro_aux: {desvio_tamanhos:.4}')
+        indice_menor_erro = erro_aux.index(min(erro_aux))
+        erros[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vet_erro_aux[indice_menor_erro]
+        erros_min[f"{funcao} funções de pertinência e erro mínimo {erro}"] = erro_aux[indice_menor_erro]
+        pertinencias[f"{funcao} funções de pertinência e erro mínimo {erro}"] = funcao_aux[indice_menor_erro]
+        funcoes_z[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vetor_z_aux[indice_menor_erro]
+        zs[f"{funcao} funções de pertinência e erro mínimo {erro}"] = calcular_z(x,funcao_aux[indice_menor_erro],vetor_z_aux[indice_menor_erro])
 
 plotar_graficos(x, f_x, zs, erros)
 
