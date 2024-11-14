@@ -180,14 +180,14 @@ zs = {}
 x = np.linspace(0, 10, 100)
 f_x = np.exp(-x / 5) * np.sin(3 * x) + 0.5 * np.sin(x)
 
-for funcao in [5, 6, 7, 8, 9, 10]:
+for funcao in [10]:
     for erro in [0.05, 0.01]:
         print(f"{funcao} funções de pertinência e erro mínimo {erro}")
         erro_aux = []
         vet_erro_aux = []
         funcao_aux = []
         vetor_z_aux = []
-        for i in range(10): # Número de testes
+        for i in range(1): # Número de testes
             print(f"Iteração {i}")
             menor_erro, vet_erros, funcoes_pertinencia, vetor_funcoes_z = aproximar(funcao, erro)
             erro_aux.append(menor_erro)
@@ -204,6 +204,8 @@ for funcao in [5, 6, 7, 8, 9, 10]:
         print(f'Média dos tamanhos em vet_erro_aux: {media_tamanhos:.4}')
         print(f'Desvio padrão dos tamanhos em vet_erro_aux: {desvio_tamanhos:.4}')
         indice_menor_erro = erro_aux.index(min(erro_aux))
+        print(f'{media_erro_aux:.4} & {desvio_erro_aux:.4} & {media_tamanhos:6.4} & {desvio_tamanhos:6.4}')
+        print(f"Menor erro encontrado {funcao} - {erro}: {min(erro_aux):.4}")
         erros[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vet_erro_aux[indice_menor_erro]
         erros_min[f"{funcao} funções de pertinência e erro mínimo {erro}"] = erro_aux[indice_menor_erro]
         pertinencias[f"{funcao} funções de pertinência e erro mínimo {erro}"] = funcao_aux[indice_menor_erro]
