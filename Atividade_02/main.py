@@ -3,55 +3,15 @@ import matplotlib.pyplot as plt
 import random
 import copy
 import math
+import funcoes_pertinencias as fp
 
-def pertinencia_tri(x,a,b,c):
-    if x <= a or x >= c:
-        return 0.0
-
-    if x <= b:
-        return (x - a) / (b - a)
-    
-    return (c - x) / (c - b)
-
-def pertinencia_gau(x, c, sigma):
-    return math.e**((-(x-c)**2)/(2*sigma**2))
-
-def pertinencia_cauchy(x,a,c):
-    return 1/(1 + ((x-c)/a)**2)
-
-def criar_funcoes_pertinencia(diferenca, numero_de_funcoes):
-
-    funcoes = []
-    numero_de_divisoes = numero_de_funcoes - 1
-
-    intervalo = diferenca/numero_de_divisoes
-
-    sigma = intervalo/(2*math.sqrt(2*math.log(2,math.e)))
-
-    for i in range(numero_de_funcoes):
-        # funcoes.append([intervalo*(i-1), intervalo*(i), intervalo*(i+1)])
-        funcoes.append([intervalo*i, sigma])
-
-    return funcoes
-
-# def criar_funcoes_pertinencia(diferenca, numero_de_funcoes):
-#     funcoes = []
-#     numero_de_divisoes = numero_de_funcoes - 1
-#     intervalo = diferenca/numero_de_divisoes
-#     met_int = 0.5*intervalo
-#     for i in range(numero_de_funcoes):
-#         funcoes.append([met_int,intervalo*i])
-#     return funcoes
-
-def calcular_z(x,funcoes_pertinencia,vetor_funcoes_z):
+def calcular_z(x,funcoes_pertinencia,vetor_funcoes_z,tipo_funcao):
     z = []
     for ponto in x:
         somatorio_cima = 0
         somatorio_baixo = 0
         for i in range(len(funcoes_pertinencia)):
-            # pertinencia_ponto = pertinencia_tri(ponto,*funcoes_pertinencia[i])
-            pertinencia_ponto = pertinencia_gau(ponto,*funcoes_pertinencia[i])
-            # pertinencia_ponto = pertinencia_cauchy(ponto, *funcoes_pertinencia[i])
+            pertinencia_ponto = tipo_funcao.get_pertinencia(None, ponto, *funcoes_pertinencia[i])
             somatorio_baixo += pertinencia_ponto
             somatorio_cima += pertinencia_ponto*(vetor_funcoes_z[i][0]*ponto + vetor_funcoes_z[i][1])
         z.append(somatorio_cima/somatorio_baixo if somatorio_baixo != 0 else 1)
@@ -66,14 +26,8 @@ def calcular_erro(z, f_x, erros):
     erro = erro**(1/2)
     erros.append(erro)
 
-def att_funcoes(funcoes_pertinencia, vetor_funcoes_z, i, j, multiplicador, ganho, geracao_atual):
-    # if j > 1: 
+def att_funcoes(vetor_funcoes_z, i, j, multiplicador, ganho, geracao_atual):
     vetor_funcoes_z[i][j] += multiplicador*ganho
-    # else:
-    #     funcoes_pertinencia[i][j] += multiplicador*ganho
-    #     if j == 1:
-    #         if funcoes_pertinencia[i][1] <= 0:
-    #             funcoes_pertinencia[i][1] = 0.01
     return geracao_atual + 1
 
 def check_erro(menor_erro, geracao_atual, erros, z):
@@ -83,20 +37,22 @@ def check_erro(menor_erro, geracao_atual, erros, z):
         melhor_ger = geracao_atual
         return menor_z, menor_erro, melhor_ger
     
-def att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger):
-    geracao_atual = att_funcoes(funcoes_pertinencia, vetor_funcoes_z, i, j, multiplicador, ganho, geracao_atual)
-    z = calcular_z(x, funcoes_pertinencia, vetor_funcoes_z)
+def att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger,tipo_funcao):
+    geracao_atual = att_funcoes(vetor_funcoes_z, i, j, multiplicador, ganho, geracao_atual)
+    z = calcular_z(x, funcoes_pertinencia, vetor_funcoes_z, tipo_funcao)
     calcular_erro(z, f_x, erros)
     resultado = check_erro(menor_erro, geracao_atual, erros, z)
     if resultado is not None:
         menor_z, menor_erro, melhor_ger = resultado
     return geracao_atual, menor_z, menor_erro, melhor_ger
 
-def aproximar(x, f_x, numero_funcoes, erro_minimo):
-    funcoes_pertinencia = criar_funcoes_pertinencia(10, numero_funcoes)
+def aproximar(x, f_x, numero_funcoes, erro_minimo, tipo_funcao):
+    funcoes = tipo_funcao(10,numero_funcoes)
+    funcoes_pertinencia = []
+    for chave in funcoes.dominios.keys():
+        funcoes_pertinencia.append(funcoes.dominios[chave])
+        
     vetor_funcoes_z = [[random.uniform(-1, 1), random.uniform(-1, 1)] for _ in range(numero_funcoes)]
-
-    valores_anteriores_funcoes = copy.deepcopy(funcoes_pertinencia)
     valores_anteriores_z = copy.deepcopy(vetor_funcoes_z)
 
     erros = []
@@ -104,10 +60,8 @@ def aproximar(x, f_x, numero_funcoes, erro_minimo):
 
     geracao_atual = 0
     melhor_ger = geracao_atual
-    numero_teste_geracoes = numero_funcoes * 2
-    maximo_geracoes = 100*numero_teste_geracoes
 
-    z = calcular_z(x, funcoes_pertinencia, vetor_funcoes_z)
+    z = calcular_z(x, funcoes_pertinencia, vetor_funcoes_z,tipo_funcao)
     menor_z = copy.deepcopy(z)
     calcular_erro(z, f_x, erros)
     resultado = check_erro(menor_erro, geracao_atual, erros, z)
@@ -117,31 +71,27 @@ def aproximar(x, f_x, numero_funcoes, erro_minimo):
     ganho = 1
     multiplicador = 1
 
-    while menor_erro > erro_minimo and ganho > 0.01*erro_minimo: #geracao_atual - melhor_ger < maximo_geracoes: 
+    while menor_erro > erro_minimo and ganho > 0.01*erro_minimo:
         for i in range(numero_funcoes):
             for j in range(2):
-                geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
+                geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger,tipo_funcao)
 
                 while(erros[-2] > erros[-1]):
-                    valores_anteriores_funcoes = copy.deepcopy(funcoes_pertinencia)
                     valores_anteriores_z = copy.deepcopy(vetor_funcoes_z)
-                    geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
+                    geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger,tipo_funcao)
 
                 multiplicador *= -1
 
-                funcoes_pertinencia = copy.deepcopy(valores_anteriores_funcoes)
                 vetor_funcoes_z = copy.deepcopy(valores_anteriores_z)
                 
-                geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
+                geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger,tipo_funcao)
 
                 while(erros[-2] > erros[-1]):
-                    valores_anteriores_funcoes = copy.deepcopy(funcoes_pertinencia)
                     valores_anteriores_z = copy.deepcopy(vetor_funcoes_z)
-                    geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger)
+                    geracao_atual, menor_z, menor_erro, melhor_ger = att_z_e_erro(i, j, x, funcoes_pertinencia, vetor_funcoes_z, f_x, erros, menor_erro, geracao_atual, multiplicador, ganho, menor_z, melhor_ger,tipo_funcao)
 
                 multiplicador *= -1
 
-                funcoes_pertinencia = copy.deepcopy(valores_anteriores_funcoes)
                 vetor_funcoes_z = copy.deepcopy(valores_anteriores_z)
         ganho /= 2
 
@@ -193,7 +143,7 @@ for funcao in [9]:
         vetor_z_aux = []
         for i in range(10): # Número de testes
             print(f"Iteração {i}")
-            menor_erro, vet_erros, funcoes_pertinencia, vetor_funcoes_z = aproximar(x,f_x,funcao, erro)
+            menor_erro, vet_erros, funcoes_pertinencia, vetor_funcoes_z = aproximar(x,f_x,funcao, erro, fp.triangular)
             erro_aux.append(menor_erro)
             vet_erro_aux.append(vet_erros)
             funcao_aux.append(funcoes_pertinencia)
@@ -214,7 +164,7 @@ for funcao in [9]:
         erros_min[f"{funcao} funções de pertinência e erro mínimo {erro}"] = erro_aux[indice_menor_erro]
         pertinencias[f"{funcao} funções de pertinência e erro mínimo {erro}"] = funcao_aux[indice_menor_erro]
         funcoes_z[f"{funcao} funções de pertinência e erro mínimo {erro}"] = vetor_z_aux[indice_menor_erro]
-        zs[f"{funcao} funções de pertinência e erro mínimo {erro}"] = calcular_z(x,funcao_aux[indice_menor_erro],vetor_z_aux[indice_menor_erro])
+        zs[f"{funcao} funções de pertinência e erro mínimo {erro}"] = calcular_z(x,funcao_aux[indice_menor_erro],vetor_z_aux[indice_menor_erro],fp.triangular)
 
 plotar_graficos(x, f_x, zs, erros)
 
